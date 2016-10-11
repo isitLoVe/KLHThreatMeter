@@ -128,7 +128,7 @@ me.isplayerofficer = function(playername)
 			
 			name, rank = GetRaidRosterInfo(i)
 			if name == playername then
-				if rank > -1 then
+				if rank > 0 then
 					return true
 				else
 					return nil
