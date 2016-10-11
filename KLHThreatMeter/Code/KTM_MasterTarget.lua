@@ -210,6 +210,64 @@ me.setrequest = function(author, target)
 end
 
 --[[
+mod.target.setrequestbw(author, target)
+Called when we receive a network message of someone setting the master target.
+The problem is that if you have a different localisation to <author>, you will think his target is spelt differently to <target>! So we have to check for this, and override if necessary.
+BigWigs
+<author>		string; name of the player who sent the message
+<target>		string; name of a mob
+]]
+me.setrequestbw = function(author, target)
+		
+	local errormessage = ""	
+	
+	-- 1) Find the author's UnitID
+	local officerunit = mod.unit.findunitidfromname(author)
+	--local officertarget = UnitName(tostring(officerunit) .. "target")
+	
+	-- If the officer's target is just far enough away from us, we will be able to target him but his name will be "Unknown", which could stuff things up
+	--if officertarget == UNKNOWN then
+	--	officertarget = nil
+	--end
+	
+	-- 2) Check for differences
+	--if officertarget == nil then
+		--errormessage = string.format(mod.string.get("print", "network", "newmttargetnil"), target, author)
+	
+	--elseif officertarget ~= target then
+		--errormessage = string.format(mod.string.get("print", "network", "newmttargetmismatch"), author, target, officertarget)
+	--	target = officertarget
+	--end
+		
+	-- 3) Check for worldboss target
+	if UnitClassification((officerunit or "") .. "target") == "worldboss" then
+		me.isworldboss = true
+	else
+		me.isworldboss = false
+	end
+	
+	-- 4) Notify user if there is a change
+	if target ~= me.mastertarget then
+		me.mastertarget = target
+		KLHTM_RequestRedraw("raid")
+		
+		-- print out any warning if there was one
+		if errormessage ~= "" then
+			mod.out.print(errormessage)
+		end
+		
+		-- print out the new target
+		mod.out.print(string.format(mod.string.get("print", "network", "newmt"), target, author))
+	end
+	
+	-- 5) update network parameters and such
+	me.lastmtauthor = author
+	me.lastmttime = GetTime()
+	me.lastpollmessage = target
+	
+end
+
+--[[
 mod.boss.targetismaster(target)
 Checks whether <target> is the master target. The master target is usually just a name / string, but it may be something
 more general in the future (e.g. tracking both bosses in the Twin Emps fight).

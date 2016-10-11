@@ -158,7 +158,25 @@ me.commands =
 			end
 		end
 	end,
-
+	
+	-- setting the master target for BigWigs
+	["targetbw"] = function(author, message, start)
+	
+		-- check player is an officer
+		if me.officercheck(author, message) then
+			
+			local newmt = string.sub(message, start + 1)
+			-- check newmt makes sense
+			
+			if newmt ~= nil and string.len(newmt) > 0 then
+				
+				mod.target.setrequestbw(author, newmt)
+				
+				return true
+			end
+		end
+	end,
+	
 	-- polling the master target
 	["mtpoll"] = function(author, message, start)
 		
