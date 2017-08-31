@@ -105,7 +105,7 @@ klhtm.string.data["esES"] =
 	},
 	["threatsource"] = -- these values are for user printout only
 	{
-		["powergain"] = "Ganas de Poder",
+		["powergain"] = "Ganacia de Poder",
 		["total"] = "Total",
 		["special"] = "Especiales",
 		["healing"] = "Curación",
@@ -369,7 +369,7 @@ klhtm.string.data["esES"] =
 			["resize"] = "Si está marcado, el número de filas visibles bajarán para emparejar el número de jugadores reportándo amenaza.",
 			["aggro"] = "Si está marcado, el jugador se añade a la pantalla de banda para mostrar el límite de amenaza estimado. Es más preciso cuando un Objetivo Maestro es definido.",
 			["rows"] = "El número máximo de jugadores visibles en la ventana de amenaza de banda.",
-			["bottom"] = "Si está marcado, la barra base se oculta. Muestra tu déficit de amenaza y el Maestro Objetivo.",
+			["bottom"] = "Si está marcado, la barra base se oculta. Muestra tu déficit de amenaza y el Objetivo Maestro.",
 		},
 	},
 	["print"] = 
