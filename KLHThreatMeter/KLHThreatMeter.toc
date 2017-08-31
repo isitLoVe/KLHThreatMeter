@@ -2,6 +2,7 @@
 ## Title: KLHThreatMeter |cff1fff1f<Mesmerize>|r edition
 ## Author: Kenco@Perenolde, edited by Sulfuras, Modified by |cff02bf02Luise|r for VanillaGaming
 ## Notes: A Threat Meter
+## Notes-esES: Un Medidor de Amenaza
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
 ## Version: 17.36
@@ -9,6 +10,7 @@
 Code\KTM_Core.lua
 Code\Localisation\KTM_Localisation.lua
 Code\Localisation\KTM_enUS.lua
+Code\Localisation\KTM_esES.lua
 Code\Localisation\KTM_deDE.lua
 Code\Localisation\KTM_frFR.lua
 Code\Localisation\KTM_zhCN.lua
