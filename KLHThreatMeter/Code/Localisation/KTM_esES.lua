@@ -452,7 +452,7 @@ klhtm.string.data["esES"] =
 		table = 
 		{
 			autohideon = "La ventana se ocultará y mostrará automáticamente.",
-			autohideoff = "La ventana no está ocultando automáticamente.",
+			autohideoff = "La ventana no se oculta automáticamente.",
 		}
 	}
 }
