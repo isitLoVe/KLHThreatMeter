@@ -274,7 +274,7 @@ klhtm.string.data["esES"] =
 			},
 			["buttonlong"] = {
 				-- the tooltip descriptions for command buttons
-				["close"] = "Los datos de amenaza seguirán enviandose si estas en un grupo o banda",
+				["close"] = "Los datos de amenaza seguirán enviándose si estás en un grupo o banda",
 				["min"] = "",
 				["max"] = "",
 				["self"] = "Mostrar detalles de amenaza propios",
