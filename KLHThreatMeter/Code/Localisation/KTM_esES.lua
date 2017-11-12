@@ -414,7 +414,7 @@ klhtm.string.data["esES"] =
 		["network"] = 
 		{
 			["newmttargetnil"] = "No puede confirmar el objetivo maestro|cffffff00%s|r porque |cffffff00%s|r no tiene objetivo.",
-			["newmttargetmismatch"] = "|cffffff00%s|r define el objetivo maestro a |cffffff00%s|r pero su propio objetivo es |cffffff00%s|r. Usando en cambio su propio objetivo, ¡Compruebalo!",
+			["newmttargetmismatch"] = "|cffffff00%s|r define el objetivo maestro a |cffffff00%s|r pero su propio objetivo es |cffffff00%s|r. Usando en cambio su propio objetivo, ¡Compruébalo!",
 			["mtpollwarning"] = "Se actualiza tu maestro objetivo a |cffffff00%s|r, pero no puede confirmarlo. Pregunta a |cffffff00%s|r retransmitir el maestro objetivo si no parece correcto.",
 			["threatreset"] = "El medidor de amenaza fue reiniciado por |cffffff00%s|r.",
 			["newmt"] = "El objetivo maestro se asigna a |cffffff00%s|r por |cffffff00%s|r.",
