@@ -198,7 +198,15 @@ me.specialattack = function(abilityid, target, damage, iscrit, spellschool)
 		me.event.damage = damage - whitedamage
 		me.event.threat = threatmodifier * (damage * mod.my.ability("maul", "multiplier") - whitedamage)
 		me.event.rage = mod.my.ability("maul", "rage") + whitedamage / (UnitLevel("player") / 2)
+
+	-- Special Case: Feint
+	elseif abilityid == "feint" then
 		
+		-- get the reduced threat value for feint with the player's rank and multiply by global threatmodifier
+		local threatReduce = mod.my.ability("feint", "threat") * threatmodifier
+		me.event.threat = threatReduce
+
+
 	-- Default Case: all other abilities
 	else
 		
@@ -277,7 +285,6 @@ Handles a damage-causing ability with no special threat properties. We often hav
 ]]
 --! This variable is referenced by these modules: combatparser, 
 me.normalattack = function(spellname, spellid, damage, isdot, target, iscrit, spellschool)
-	
 	-- check the attack is directed at the master target. If not, ignore.
 	if mod.target.targetismaster(target) == nil then
 		return
