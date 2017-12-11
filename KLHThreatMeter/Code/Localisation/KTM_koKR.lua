@@ -218,7 +218,7 @@ klhtm.string.data["koKR"] =
 		["title"] = {
 			["text"] = {
 				-- the window titles
-				["long"] = "KTM %d.%d",
+				["long"] = "KTM %d.%s",
 				["short"] = "KTM",
 
 			},

@@ -248,7 +248,7 @@ klhtm.string.data["deDE"] =
 		["title"] = {
 			["text"] = {
 				-- the window titles
-				["long"] = "KTM %d.%d",
+				["long"] = "KTM %d.%s",
 				["short"] = "KTM",
 			},
 			["buttonshort"] = {
