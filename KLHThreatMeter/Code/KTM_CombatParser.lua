@@ -245,6 +245,12 @@ me.parserstagetwo =
       
 	end,
 	
+	["taunt"] = function(target, name)
+		me.action.spellname = name
+		me.action.target = target
+		me.action.type = "special"
+
+	end,
 }
 
 me.parserstagethree = 
@@ -353,9 +359,10 @@ me.parserconstructor =
 	{"perform", "SPELLPERFORMGOSELFTARGETTED", "CHAT_MSG_SPELL_SELF_DAMAGE"}, 	-- "You perform %s on %s."
 	{"spellcast", "SPELLCASTGOSELFTARGETTED", "CHAT_MSG_SPELL_SELF_DAMAGE"},	-- "You cast %s on %s."
 	
-  {"othersdotonother", "PERIODICAURADAMAGEOTHEROTHER", "CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE"}, -- added for korean
+	{"othersdotonother", "PERIODICAURADAMAGEOTHEROTHER", "CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE"}, -- added for korean
 	{"dot", "PERIODICAURADAMAGESELFOTHER", "CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE"}, -- "%s suffers %d %s damage from your %s."
-	
+	{"taunt", "AURAADDEDOTHERHARMFUL", "CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE"}, -- "%s is afflicted by %s."
+
   
 	{"othershotonother", "PERIODICAURAHEALOTHEROTHER", "CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_BUFFS"}, -- "%s gains %d health from %s' %s."
 	{"yourhotonother", "PERIODICAURAHEALSELFOTHER", "CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_BUFFS"}, -- "%s gains %d health from your %s."
