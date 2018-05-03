@@ -421,18 +421,32 @@ end
 me.registertaunt()
 Called when you succesfully casts Taunt or Growl on a mob.
 <target> is the name of the mob you have taunted.
+
+When to process the taunt? Here's a truth table:
+isMastertargetSet	targetIsMasterTarget	| processTaunt
+0					0						| 1
+0					1						| 1
+1					0						| 0
+1					1						| 1
+
+=> We DONT want to process the taunt when mastertarget is set AND target is NOT the mastertarget
+=> Row3 is:  isMastertargetSet and NOT targetIsMasterTarget
+=> We want all other cases, so we negate that:
+=> NOT (isMastertargetSet and NOT targetIsMasterTarget)
 ]]
 --! This variable is referenced by these modules: combatparser, 
 me.taunt = function(target)
 	-- don't do anything if you're no warrior
 	local _, class = UnitClass("player")
 	if class == "WARRIOR" then
-		-- check whether _I_ taunted
-		-- 1) is my target targetting me?
-		if UnitName("targettarget") == UnitName("player") then
-			-- 2) is my taunt on cooldown?
-			if me.isTauntOnCooldown() then
-				me.addTauntThreat()
+		if not (mod.target.mastertarget and not mod.target.targetismaster(target)) then
+			-- check whether _I_ taunted
+			-- 1) is my target targetting me?
+			if UnitName("targettarget") == UnitName("player") then
+				-- 2) is my taunt on cooldown?
+				if me.isTauntOnCooldown() then
+					me.addTauntThreat()
+				end
 			end
 		end
 	end
