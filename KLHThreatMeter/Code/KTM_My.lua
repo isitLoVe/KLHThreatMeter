@@ -283,7 +283,7 @@ me.ability = function(spellid, parameter)
 	local spellrank = me.spellranks[spellid]
 	
 	if spellrank == nil then
-		if mod.out.checktrace("error", me, "ability") then
+		if mod.out.checktrace("warning", me, "ability") then
 			mod.out.printtrace(string.format("No spell rank defined for |cffffff00%s.", tostring(spellid)))
 		end
 

@@ -424,12 +424,16 @@ Called when you succesfully casts Taunt or Growl on a mob.
 ]]
 --! This variable is referenced by these modules: combatparser, 
 me.taunt = function(target)
-	-- check whether _I_ taunted
-	-- 1) is my target targetting me?
-	if UnitName("targettarget") == UnitName("player") then
-		-- 2) is my taunt on cooldown?
-		if me.isTauntOnCooldown() then
-			me.addTauntThreat()
+	-- don't do anything if you're no warrior
+	local _, class = UnitClass("player")
+	if class == "WARRIOR" then
+		-- check whether _I_ taunted
+		-- 1) is my target targetting me?
+		if UnitName("targettarget") == UnitName("player") then
+			-- 2) is my taunt on cooldown?
+			if me.isTauntOnCooldown() then
+				me.addTauntThreat()
+			end
 		end
 	end
 end
