@@ -484,7 +484,7 @@ end
 me.bossHasTauntDebuff = function()
 	for i=1,16 do
 		icon = UnitDebuff("target", i)
-		if icon == "Interface\Icons\Spell_Nature_Reincarnation" then
+		if icon == "Interface\\Icons\\Spell_Nature_Reincarnation" then
 			return true
 		end
 	end
