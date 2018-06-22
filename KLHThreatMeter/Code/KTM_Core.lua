@@ -40,7 +40,7 @@ me.frame = nil -- set at runtime
 
 -- Mod Version
 me.release = 17
-me.revision = "37"
+me.revision = "38"
 me.build = 235
 
 --[[
