@@ -444,7 +444,7 @@ me.taunt = function(target)
 			-- 1) is my target targetting me?
 			if UnitName("targettarget") == UnitName("player") then
 				-- 2) is my taunt on cooldown?
-				if me.isTauntOnCooldown() then
+				if me.isTauntOnCooldown() and me.bossHasTauntDebuff() then
 					me.addTauntThreat()
 				end
 			end
@@ -479,6 +479,16 @@ end
 me.isTauntOnCooldown = function()
 	me.tauntSpellIndex = me.getSpellIndexForTaunt()
 	return GetSpellCooldown(me.tauntSpellIndex, "spell") > 0
+end
+
+me.bossHasTauntDebuff = function()
+	for i=1,16 do
+		icon = UnitDebuff("target", i)
+		if icon == "Interface\Icons\Spell_Nature_Reincarnation" then
+			return true
+		end
+	end
+	return false
 end
 
 -- arg:
