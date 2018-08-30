@@ -253,7 +253,7 @@ klhtm.string.data["frFR"] =
 		["title"] = {
 			["text"] = {
 				-- the window titles
-				["long"] = "KTM %d.%d",	-- don't need to localise these
+				["long"] = "KTM %d.%s",	-- don't need to localise these
 				["short"] = "KTM",
 				
 			},

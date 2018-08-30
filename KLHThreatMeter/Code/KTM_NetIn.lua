@@ -352,9 +352,6 @@ me.commands =
 		local release, revision
 		_, _, release, revision = string.find(message, "(%d+)%.?(%d*)", start + 1)
 		
-		release = tonumber(release)
-		revision = tonumber(revision)
-		
 		if release == nil then
 			return
 		end
@@ -362,9 +359,7 @@ me.commands =
 		-- previously, only the release was sent as the version code. Therefore if someone sends in this format, 
 		-- their version must be old.
 		if revision == nil then
-
 			mod.out.print(string.format(mod.string.get("print", "network", "remoteoldversion"), author, release .. ".x", mod.release .. "." .. mod.revision))
-		
 		else
 		
 			-- newer versions send their release and revision numbers, in a dot delimited string.			

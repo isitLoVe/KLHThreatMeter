@@ -198,7 +198,15 @@ me.specialattack = function(abilityid, target, damage, iscrit, spellschool)
 		me.event.damage = damage - whitedamage
 		me.event.threat = threatmodifier * (damage * mod.my.ability("maul", "multiplier") - whitedamage)
 		me.event.rage = mod.my.ability("maul", "rage") + whitedamage / (UnitLevel("player") / 2)
+
+	-- Special Case: Feint
+	elseif abilityid == "feint" then
 		
+		-- get the reduced threat value for feint with the player's rank and multiply by global threatmodifier
+		local threatReduce = mod.my.ability("feint", "threat") * threatmodifier
+		me.event.threat = threatReduce
+
+
 	-- Default Case: all other abilities
 	else
 		
@@ -277,7 +285,6 @@ Handles a damage-causing ability with no special threat properties. We often hav
 ]]
 --! This variable is referenced by these modules: combatparser, 
 me.normalattack = function(spellname, spellid, damage, isdot, target, iscrit, spellschool)
-	
 	-- check the attack is directed at the master target. If not, ignore.
 	if mod.target.targetismaster(target) == nil then
 		return
@@ -414,79 +421,125 @@ end
 me.registertaunt()
 Called when you succesfully casts Taunt or Growl on a mob.
 <target> is the name of the mob you have taunted.
+
+When to process the taunt? Here's a truth table:
+isMastertargetSet	targetIsMasterTarget	| processTaunt
+0					0						| 1
+0					1						| 1
+1					0						| 0
+1					1						| 1
+
+=> We DONT want to process the taunt when mastertarget is set AND target is NOT the mastertarget
+=> Row3 is:  isMastertargetSet and NOT targetIsMasterTarget
+=> We want all other cases, so we negate that:
+=> NOT (isMastertargetSet and NOT targetIsMasterTarget)
 ]]
 --! This variable is referenced by these modules: combatparser, 
 me.taunt = function(target)
-	
-	if mod.out.checktrace("info", me, "taunt") then
-		mod.out.printtrace(string.format("Taunting %s!", target))
-	end
-	
-	--[[
-	OK, new idea. If targettarget has greater threat than you, assume they are the aggro target.
-	]]
-	if mod.target.targetismaster(target) == nil then
-		-- you taunted a mob that is not the master target
-		return
-	end
-	
-	-- here, you either taunted the master target, or there is no master target
-	-- check if you are still targetting that mob (likely, if you just taunted it)
-	if UnitName("target") == target then
-	
-		-- Check for tt
-		local targettarget = UnitName("targettarget")
-		
-		if mod.table.raiddata[targettarget] and (mod.table.raiddata[targettarget] > mod.table.getraidthreat()) then
-			-- your current target is targetting another player, and they have more threat than you
-			
-			local gain = mod.table.raiddata[targettarget] - mod.table.getraidthreat()
-				
-			me.event.hits = 1
-			me.event.damage = 0
-			me.event.rage = 0
-			me.event.threat = gain
-			me.event.name = mod.string.get("spell", "taunt")
-
-			me.addattacktodata(mod.string.get("spell", "taunt"), me.event)
-			me.addattacktodata(mod.string.get("threatsource", "total"), me.event)
-			
-			if mod.out.checktrace("info", me, "taunt") then
-				mod.out.printtrace(string.format("You taunt %s from %s, gaining %d threat.", target, targettarget, gain))
-			end
-			
-			return
-		end
-	end
-	
-	-- If that didn't work, use the old code:	
-	
-	if target == mod.target.mastertarget then
-		local previoustargetthreat = mod.table.raiddata[mod.target.mttruetarget]
-		
-		if (previoustargetthreat ~= nil) and (previoustargetthreat > mod.table.getraidthreat()) then
-			local tauntgain = previoustargetthreat - mod.table.getraidthreat()
-			
-			me.event.hits = 1
-			me.event.damage = 0
-			me.event.rage = 0
-			me.event.threat = tauntgain
-			me.event.name = mod.string.get("spell", "taunt")
-			
-			me.addattacktodata(mod.string.get("spell", "taunt"), me.event)
-			me.addattacktodata(mod.string.get("threatsource", "total"), me.event)
-
-			if mod.out.checktrace("info", me, "taunt") then
-				mod.out.printtrace(string.format("You taunt %s from %s, gaining %d threat.", target, mod.target.mttruetarget or "<nil>", tauntgain))
-			end
-		
-		else
-			if mod.out.checktrace("info", me, "taunt") then
-				mod.out.printtrace(string.format("You taunt %s from %s, but he had a lower threat, so you gain no threat.", target, mod.target.mttruetarget or "<nil>"))
+	-- don't do anything if you're no warrior
+	local _, class = UnitClass("player")
+	if class == "WARRIOR" then
+		if not (mod.target.mastertarget and not mod.target.targetismaster(target)) then
+			-- check whether _I_ taunted
+			-- 1) is my target targetting me?
+			if UnitName("targettarget") == UnitName("player") then
+				-- 2) is my taunt on cooldown?
+				if me.isTauntOnCooldown() and me.bossHasTauntDebuff() then
+					me.addTauntThreat()
+				end
 			end
 		end
 	end
+end
+
+me.addTauntThreat = function()
+	-- get the current max threat on the threat table
+	local currentMaxThreat = 0
+	for player, threat in mod.table.raiddata do
+		if player ~= "Aggro Gain" and threat > currentMaxThreat then
+			currentMaxThreat = threat
+		end
+	end
 	
+	-- calculate the threat gain from my threat to max threat
+	local gain = currentMaxThreat - mod.table.raiddata[UnitName("player")]
+	
+	-- craft an attack event that gives you the threat gain
+	me.event.hits = 1
+	me.event.damage = 0
+	me.event.rage = 0
+	me.event.threat = gain
+	me.event.name = mod.string.get("spell", "taunt")
+
+	-- add that to the data
+	me.addattacktodata(mod.string.get("spell", "taunt"), me.event)
+	me.addattacktodata(mod.string.get("threatsource", "total"), me.event)
+end
+
+me.isTauntOnCooldown = function()
+	me.tauntSpellIndex = me.getSpellIndexForTaunt()
+	return GetSpellCooldown(me.tauntSpellIndex, "spell") > 0
+end
+
+me.bossHasTauntDebuff = function()
+	for i=1,16 do
+		icon = UnitDebuff("target", i)
+		if icon == "Interface\\Icons\\Spell_Nature_Reincarnation" then
+			return true
+		end
+	end
+	return false
+end
+
+-- arg:
+-- spellName - case sensitive spellname, e.g. "Kick"
+-- rank - numeric rank value you want to look for
+-- return: index
+me.findSpellIndex = function(spellName, rank)
+	i, s, S = 1, "spell", GetSpellName;
+	f=spellName
+	n, r=S(i,"spell")
+	findSpell_spells = { }
+	-- find all the spells and save them in a table
+	repeat
+		if strfind(n,f)~=nil then
+		local spell = { }
+		spell["index"] = i
+		spell["name"] = n
+		spell["rank"] = r
+		tinsert(findSpell_spells, spell)
+		end
+		i=i+1;
+		n, r = S(i,"spell")
+	until n==nil
+	-- if rank is not supplied, find max rank
+	if rank == nil then
+		rank = 0
+		for _, spell in ipairs(findSpell_spells) do
+			local _, _, currentRank = strfind(spell["rank"], "(%d+)")
+			local currentRank = tonumber(currentRank)
+			if currentRank and rank and currentRank > rank then
+				rank = spell["rank"]
+			end
+		end
+	end
+	-- now return the spell with the specified rank
+	for _, spell in ipairs(findSpell_spells) do
+		if rank and spell["rank"] == rank then
+			return spell["index"]
+		end
+	end
+	-- if there is no specific rank, just return the first index
+	return findSpell_spells[1]["index"]
+end
+
+me.tauntSpellIndex = nil
+me.getSpellIndexForTaunt = function()
+	if me.tauntSpellIndex == nil then
+		return me.findSpellIndex("Taunt")
+	else
+		return me.tauntSpellIndex
+	end
 end
 
 --[[
